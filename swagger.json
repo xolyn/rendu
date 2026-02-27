@@ -1,0 +1,102 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Webpage Renderer API",
+        "version": "1.0.0",
+        "description": "Lightweight webpage rendering and Markdown extraction API service"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Current server"
+        }
+    ],
+    "paths": {
+        "/render": {
+            "get": {
+                "summary": "Render a webpage",
+                "description": "Renders a webpage and extracts its content as Markdown, HTML, or plain text.",
+                "parameters": [
+                    {
+                        "name": "url",
+                        "in": "query",
+                        "description": "The URL of the webpage to render",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uri"
+                        }
+                    },
+                    {
+                        "name": "type",
+                        "in": "query",
+                        "description": "The output type (markdown, html, or text)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "markdown",
+                                "html",
+                                "text"
+                            ],
+                            "default": "markdown"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful render",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "title": {
+                                            "type": "string"
+                                        },
+                                        "content": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (Missing or invalid URL/type)"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    },
+                    "504": {
+                        "description": "Gateway Timeout (Navigation timed out)"
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "summary": "Health check",
+                "description": "Check if the API is running",
+                "responses": {
+                    "200": {
+                        "description": "API is healthy",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "OK"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
