@@ -1,6 +1,6 @@
 # Rendu - Webpage Renderer & MCP Server
 
-A lightweight, Docker-ready HTTP API service for rendering JavaScript-heavy webpages and extracting clean content in **Markdown**, **HTML**, or **plain text**. 
+*Rendu*, French for "render", is a lightweight, Docker-ready HTTP API service for rendering JavaScript-heavy webpages and extracting clean content in **Markdown**, **HTML**, or **plain text**.
 
 Tech stack: Playwright, Mozilla's Readability, and Turndown.
 
