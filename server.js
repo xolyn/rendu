@@ -22,7 +22,7 @@ setupMcpRoutes(app);
 
 // Route for rendering
 app.get('/render', async (req, res) => {
-  const { url, type = 'markdown' } = req.query;
+  const { url, type = 'markdown', width, height } = req.query;
 
   // Validate URL
   if (!url) {
@@ -34,12 +34,34 @@ app.get('/render', async (req, res) => {
   }
 
   // Validate type
-  if (!['markdown', 'html', 'text'].includes(type)) {
-    return res.status(400).json({ error: 'Invalid type parameter. Must be markdown, html, or text.' });
+  if (!['markdown', 'html', 'text', 'screenshot'].includes(type)) {
+    return res.status(400).json({ error: 'Invalid type parameter. Must be markdown, html, text, or screenshot.' });
+  }
+
+  // Parse and validate width and height for screenshot
+  let parsedWidth = null;
+  let parsedHeight = null;
+  if (type === 'screenshot') {
+    if (width) {
+      parsedWidth = parseInt(width, 10);
+      if (isNaN(parsedWidth) || parsedWidth < 100 || parsedWidth > 1920) {
+        return res.status(400).json({ error: 'Invalid width. Must be between 100 and 1920.' });
+      }
+    }
+    if (height) {
+      parsedHeight = parseInt(height, 10);
+      if (isNaN(parsedHeight) || parsedHeight < 100 || parsedHeight > 1080) {
+        return res.status(400).json({ error: 'Invalid height. Must be between 100 and 1080.' });
+      }
+    }
+    // Require both if one is provided
+    if ((parsedWidth && !parsedHeight) || (!parsedWidth && parsedHeight)) {
+      return res.status(400).json({ error: 'Both width and height must be provided for custom screenshot size.' });
+    }
   }
 
   try {
-    const result = await renderPage(url, type);
+    const result = await renderPage(url, type, parsedWidth, parsedHeight);
 
     if (result.error) {
       // Determine status code based on error

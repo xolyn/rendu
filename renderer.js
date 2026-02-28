@@ -8,19 +8,32 @@ const turndownService = new TurndownService();
 /**
  * Renders a webpage and extracts content based on the type.
  * @param {string} url - The URL to render.
- * @param {string} type - The output type: 'markdown', 'html', or 'text'.
+ * @param {string} type - The output type: 'markdown', 'html', 'text', or 'screenshot'.
+ * @param {number|null} width - Viewport width for screenshot (optional).
+ * @param {number|null} height - Viewport height for screenshot (optional).
  * @returns {Object} The extracted content or error.
  */
-async function renderPage(url, type = 'markdown') {
+async function renderPage(url, type = 'markdown', width = null, height = null) {
   let page;
   try {
     page = await browserManager.getPage();
+
+    // Set viewport if provided
+    if (width && height) {
+      await page.setViewportSize({ width, height });
+    }
 
     // Navigate with timeout
     await page.goto(url, {
       waitUntil: 'networkidle',
       timeout: 30000
     });
+
+    if (type === 'screenshot') {
+      const title = await page.title();
+      const image = await page.screenshot({ encoding: 'base64' });
+      return { title, image };
+    }
 
     // Get page content
     const content = await page.content();

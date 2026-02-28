@@ -30,16 +30,37 @@
                     {
                         "name": "type",
                         "in": "query",
-                        "description": "The output type (markdown, html, or text)",
+                        "description": "The output type (markdown, html, text, or screenshot)",
                         "required": false,
                         "schema": {
                             "type": "string",
                             "enum": [
                                 "markdown",
                                 "html",
-                                "text"
+                                "text",
+                                "screenshot"
                             ],
                             "default": "markdown"
+                        }
+                    },
+                    {
+                        "name": "width",
+                        "in": "query",
+                        "description": "The width of the screenshot (only applicable when type=screenshot)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
+                        }
+                    },
+                    {
+                        "name": "height",
+                        "in": "query",
+                        "description": "The height of the screenshot (only applicable when type=screenshot)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "minimum": 1
                         }
                     }
                 ],
@@ -49,15 +70,31 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "title": {
-                                            "type": "string"
+                                    "oneOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "title": {
+                                                    "type": "string"
+                                                },
+                                                "content": {
+                                                    "type": "string"
+                                                }
+                                            }
                                         },
-                                        "content": {
-                                            "type": "string"
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "title": {
+                                                    "type": "string"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "description": "Base64 encoded PNG image"
+                                                }
+                                            }
                                         }
-                                    }
+                                    ]
                                 }
                             }
                         }
