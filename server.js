@@ -11,14 +11,15 @@ const { setupMcpRoutes } = require('./mcp');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON (though not needed for GET)
+// Mount MCP routes before JSON body parsing.
+// MCP transports read the raw request stream directly.
+setupMcpRoutes(app);
+
+// Middleware to parse JSON for regular REST endpoints.
 app.use(express.json());
 
 // Swagger API Documentation route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-// Mount MCP Server routes
-setupMcpRoutes(app);
 
 // Route for rendering
 app.get('/render', async (req, res) => {
