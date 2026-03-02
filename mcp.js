@@ -104,18 +104,13 @@ function setupMcpRoutes(app) {
             return res.status(500).json({ error: "MCP SDK failed to load: " + e.message });
         }
 
-        const sessionId = Date.now().toString() + Math.random().toString(36).substring(2, 9);
-        console.log(`[MCP] New SSE connection: ${sessionId}`);
-
         // Set mandatory CORS headers for SSE
         res.setHeader("Access-Control-Allow-Origin", "*");
 
-        // Construct Fully Qualified Absolute URL, which is required by many MCP clients like CherryStudio
-        const baseUrl = `${req.secure ? 'https' : 'http'}://${req.headers.host}`;
-        const messageEndpoint = `${baseUrl}/mcp/messages?sessionId=${sessionId}`;
-
-        const transport = new SSEServerTransport(messageEndpoint, res);
+        const transport = new SSEServerTransport("/mcp/messages", res);
         const mcpServer = createMcpServer();
+        const sessionId = transport.sessionId;
+        console.log(`[MCP] New SSE connection: ${sessionId}`);
 
         transports.set(sessionId, transport);
         res.on('close', () => {
@@ -144,14 +139,13 @@ function setupMcpRoutes(app) {
         }
 
         const sessionId = req.query.sessionId;
-        console.log(`[MCP] Received POST for sessionId: ${sessionId}`);
-
-        const transport = transports.get(sessionId);
+        const transport = typeof sessionId === "string" ? transports.get(sessionId) : undefined;
         if (!transport) {
-            console.warn(`[MCP] Session transport not found for ${sessionId}. Active sessions: ${Array.from(transports.keys()).join(", ")}`);
+            console.warn(`[MCP] Session not found or expired. Requested: ${String(sessionId)}`);
             return res.status(404).json({ error: "Session not found or expired" });
         }
 
+        console.log(`[MCP] Received POST for session: ${sessionId}`);
         await transport.handlePostMessage(req, res);
     });
 }
