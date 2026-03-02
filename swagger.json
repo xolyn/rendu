@@ -79,6 +79,14 @@
                                                 },
                                                 "content": {
                                                     "type": "string"
+                                                },
+                                                "fallback": {
+                                                    "type": "integer",
+                                                    "enum": [
+                                                        0,
+                                                        1
+                                                    ],
+                                                    "description": "0 means normal local rendering; 1 means Cloudflare Browser Rendering fallback was used."
                                                 }
                                             }
                                         },
@@ -91,6 +99,14 @@
                                                 "image": {
                                                     "type": "string",
                                                     "description": "Base64 encoded PNG image"
+                                                },
+                                                "fallback": {
+                                                    "type": "integer",
+                                                    "enum": [
+                                                        0,
+                                                        1
+                                                    ],
+                                                    "description": "0 means normal local rendering; 1 means Cloudflare Browser Rendering fallback was used."
                                                 }
                                             }
                                         }

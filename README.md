@@ -35,6 +35,30 @@ The server will be available at: `http://localhost:8700` *(Default port is 8700,
 
 ---
 
+## Environment Variables
+
+Rendu loads environment variables from a local `.env` file via `dotenv` (`require('dotenv').config()` in `server.js`), so values are available as `process.env.*`.
+
+Example `.env`:
+
+```env
+PORT=8700
+# PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=
+
+# Optional: only needed for timeout fallback via Cloudflare Browser Rendering #
+# CLOUDFLARE_ACCOUNT_ID=
+# CLOUDFLARE_API_TOKEN=
+```
+
+- `PORT`: HTTP server port (default: `8700` in Docker, `3000` if not set in local runtime).
+- `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`: Optional custom Chromium path for Playwright.
+- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account ID used for timeout fallback API calls.
+- `CLOUDFLARE_API_TOKEN`: Bearer token used for Cloudflare Browser Rendering fallback API calls.
+
+If Cloudflare variables are missing, normal local rendering still works. Only timeout fallback will be unavailable.
+
+---
+
 ## 1. REST API
 
 ### Render Endpoint
